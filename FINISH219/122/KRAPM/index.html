@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>192.168.001.123</title>
+<link rel="icon" type="image/png" href="/monitor0314/icons/IP.png">
+<link rel="apple-touch-icon" href="/monitor0314/icons/IP.png">
+  
+<style>
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  font-family:system-ui,sans-serif;
+  background:black url('/monitor0314/images/photo123-1.jpg') center/cover no-repeat;
+  color:white;
+  overflow:hidden;
+}
+.close-btn{
+  position:absolute;
+  top:6px;
+  right:10px;
+  font-size:18px;
+  cursor:pointer;
+  background:black;
+  padding:4px 8px;
+  border-radius:4px;
+  z-index:5;
+}
+/* status */
+.status-bar{
+  display:flex;
+  justify-content: space-between;
+  padding:4px 10px;
+  font-size:14px;
+}
+
+.weather-date{
+  text-align:center;
+  margin-top:20px;
+  font-size:16px;
+}
+
+.main-icons{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  gap: 25px;
+  margin-top: 60px;
+}
+
+.main-icons img,.bottom-bar img{
+  width:50px;
+  height:50px;
+  cursor:pointer;
+}
+
+.bottom-bar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  background:rgba(0,0,0,.6);
+}
+
+.status-right{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+  
+/* modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:999;
+}
+
+.modal{
+  position:relative;
+  width:90%;
+  height:90%;
+  background:black;
+  border-radius:8px;
+  overflow:hidden;
+}
+
+.modal.image-mode{
+  background:black;
+}
+
+.modal-content{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.modal-content img{
+  max-width:100%;
+  max-height:100%;
+  user-select:none;
+  pointer-events:none;
+}
+
+/* text-mode for messages */
+.modal-content.text-mode{
+  display:block;
+  align-items:unset;
+  justify-content:unset;
+  overflow:auto;
+  padding:16px;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.msg-item{
+  width: calc(100% - 32px);
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.25);
+  margin-bottom:20px;
+}
+
+.msg-line1 {
+  position: relative;       /* 父容器相對定位 */
+  padding-right: 80px;      /* 預留右側空間給日期 */
+  font-size: 16px;
+}
+
+.msg-line1 div:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.msg-line1 div:last-child {
+  position: absolute;       /* 直接固定在右側 */
+  right: 0;                 /* 緊貼右邊 */
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;      /* 日期完整顯示 */
+}
+
+.msg-full-text{
+  max-width: 100%;
+  box-sizing: border-box;
+
+  /* 防止文字衝出視窗 */
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.msg-preview{
+  font-size:14px; 
+  line-height:2.6; 
+  opacity:.8;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.msg-back{
+  margin-bottom:12px;
+  cursor:pointer;
+  opacity:.8;
+}
+
+/* image index */
+.image-index{
+  width: auto;              
+  max-width: 200px;         
+  position: absolute;       
+  bottom: 6px;            
+  left: 50%;    
+  transform: translateX(-50%);
+  text-align: center;
+  font-size:16px;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 12px;
+  border-radius:12px;
+  z-index:10;
+}
+
+/* exit tab */
+.exit-tab{
+  position:fixed;
+  right:-78px;
+  top:50%;
+  transform:translateY(-50%);
+  width:110px;
+  height:42px;
+  background:#1fbf5b;
+  color:black;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  cursor:pointer;
+  transition:.25s;
+  z-index:10;
+  border-top-left-radius:21px;
+  border-bottom-left-radius:21px;
+}
+.exit-tab.open{ right:-12px }
+
+  /* 天氣卡 */
+.weather-card-horizontal {
+  width: 90%;      
+  max-width: 350px;
+  margin: 30px auto 0;
+  padding: 16px 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.weather-icon {
+  width: 70px;
+  height: 70px;
+}
+
+.weather-middle {
+  flex: 1;
+  text-align: center;
+}
+
+.temp {
+  font-size: 50px;
+  font-weight: 200;
+  margin: 0;
+}
+
+.weather-right {
+  text-align: right;
+}
+
+.location {
+  font-size: 13px;
+  letter-spacing: 2px;
+  opacity: .85;
+}
+
+.date {
+  font-size: 12px;
+  opacity: .7;
+  margin-top: 2px;
+}
+
+.meta {
+  font-size: 13px;
+  opacity: .8;
+  margin-top: 2px;
+}
+/* app icons with label */
+.app-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+}
+
+.app-item img{
+  width:50px;
+  height:50px;
+}
+
+.app-label{
+  font-size:12px;
+  opacity:.85;
+  letter-spacing:1px;
+}
+.status-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:4px 10px;
+  font-size:14px;
+}
+
+/* 左側圖示 */
+.status-left{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.status-icon{
+  width:16px;
+  height:16px;
+}
+
+/* 電量膠囊框 */
+.battery-container{
+  position:relative;
+  width:40px;
+  height:18px;
+  background: rgba(255,255,255,0.2);
+  border-radius:12px;   /* 膠囊形狀 */
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  color:white;
+}
+
+/* 進度條 */
+.battery-bar{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:0%;             /* 由 JS 設定 */
+  background: linear-gradient(90deg, #ff3b3b, #3b6cff);
+  border-radius:12px;
+  transition: width 0.3s;
+  z-index:1;
+}
+
+/* 文字顯示在最上層 */
+.battery-text{
+  position:relative;
+  z-index:2;
+  font-weight:bold;
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="status-bar">
+  <div class="status-time" id="time"></div>
+  <div class="status-right">
+    <img src="/monitor0314/icons/wifi.png" class="status-icon">
+    <img src="/monitor0314/icons/signal.png" class="status-icon">
+    <div class="battery-container">
+      <div class="battery-bar" id="batteryBar"></div>
+      <div class="battery-text" id="batteryText">37%</div>
+    </div>
+  </div>
+</div>
+
+ <!-- 天氣卡 -->
+<div class="weather-card-horizontal">
+  <img id="weather-icon" src="" class="weather-icon">
+  <div class="weather-middle">
+    <div class="temp" id="weather-temp">--°</div>
+  </div>
+<div class="weather-right">
+  <div class="location">GOTHAM</div>
+  <div class="date" id="weather-date">--</div>
+  <div class="meta" id="weather-desc">--</div>
+  <div class="meta" id="weather-humidity">濕度 --%</div>
+</div>
+</div>
+  
+ <!-- 中間APP -->
+<div class="main-icons">
+
+  <div class="app-item" id="map">
+    <img src="/monitor0314/icons/map123.png">
+    <div class="app-label">地圖</div>
+  </div>
+
+  <div class="app-item" id="calculator">
+    <img src="/monitor0314/icons/calculator123.png">
+    <div class="app-label">計算機</div>
+  </div>
+
+  <div class="app-item" id="photo">
+    <img src="/monitor0314/icons/photo123.png">
+    <div class="app-label">照片</div>
+  </div>
+
+  <div class="app-item" id="calendar">
+    <img src="/monitor0314/icons/calendar123.png">
+    <div class="app-label">行事曆</div>
+  </div>
+</div>
+
+ 
+<div class="bottom-bar">
+  <img src="/monitor0314/icons/phone123.png" id="phone">
+  <img src="/monitor0314/icons/messege123.png" id="message">
+  <img src="/monitor0314/icons/chrome123.png" id="google">
+  <img src="/monitor0314/icons/camera123.png" id="camera">
+</div>
+
+<div class="exit-tab" id="exitTab">退出IP</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal" id="modalBox">
+    <div class="close-btn" id="close">✖</div>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+  <div class="image-index" id="imgIndex"></div> <!-- 放在 modalBox 外面 -->
+</div>
+
+<script>
+  // 電量顯示
+  function setBattery(percent){
+  const bar = document.getElementById('batteryBar');
+  const text = document.getElementById('batteryText');
+  const pct = Math.min(Math.max(percent,0),100); // 0~100限制
+  bar.style.width = pct + '%';
+  text.textContent = pct + '%';
+}
+
+setBattery(28);
+  
+/* 預載圖片 */
+const preloadImages = [
+  '/monitor0314/icons/IP.png',
+  '/monitor0314/images/photo123-1.jpg',
+  '/monitor0314/images/photo123-2.jpg',
+  '/monitor0314/images/photo123-3.jpg',
+  '/monitor0314/images/map123-1.png',
+  '/monitor0314/images/map123-2.png',
+  '/monitor0314/images/map123-3.png',
+  '/monitor0314/images/calendar123-1.jpg',
+  '/monitor0314/images/calendar123-2.jpg',
+  '/monitor0314/images/calendar123-3.jpg'
+];
+preloadImages.forEach(src=>{const img=new Image(); img.src=src;});
+
+/* time/date */
+const timeEl = document.getElementById('time');
+function updateTime(){
+  const d = new Date();
+  timeEl.textContent = d.toTimeString().slice(0,5);
+}
+updateTime();
+setInterval(updateTime, 60000);
+
+/* modal base */
+const modal=document.getElementById('modal');
+const modalBox=document.getElementById('modalBox');
+const modalContent=document.getElementById('modalContent');
+const imgIndex=document.getElementById('imgIndex');
+let imgs=[],idx=0,startX=0;
+
+document.getElementById('close').onclick=()=>modal.style.display='none';
+
+/* messages */
+/* messages */
+const messages=[
+  {dir:'↗',num:'+123153483',date:'1/26',full:'2026/01/26',text:'我要訂八杯奶茶，半糖去冰，晚點會有助理過去<br>領。'},
+  {dir:'↙',num:'+123586812',date:'2/20',full:'2026/02/20',text:'里夫斯先生，您要的資訊已經傳到您的信箱，請<br>注意查收。'},
+  {dir:'↗',num:'+158973158',date:'3/05',full:'2026/03/05',text:'你什麼時候才會把導演的事情處理完？立刻回電<br>給我。'},
+  {dir:'↗',num:'+125378953',date:'3/06',full:'2026/03/06',text:'幫我點忙，速。'}
+];
+
+/* 生成第一層預覽文字，超過第15個字加… */
+messages.forEach(m=>{
+  m.preview15 = m.text.length > 15 ? m.text.slice(0,15)+'…' : m.text;
+});
+
+function openMessageList(){
+  modalBox.classList.remove('image-mode');
+  modalContent.classList.add('text-mode');
+  imgIndex.style.display='none';
+  modal.style.display='flex';
+
+  modalContent.innerHTML = `
+  <div class="msg-header" style="font-size:18px; font-weight:bold;">訊息</div>
+  ${messages.map((m,i)=>`
+    <div class="msg-item" onclick="openMessageDetail(${i})" style="margin-bottom:25px;">
+        <div class="msg-line1">
+          <div>${m.dir}${m.num}</div>
+          <div>${m.date}</div>
+        </div>
+        <div class="msg-preview">${m.preview15}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+window.openMessageDetail=function(i){
+  const m=messages[i];
+  modalBox.classList.remove('image-mode');
+  modalContent.classList.add('text-mode');
+  imgIndex.style.display='none';
+  modal.style.display='flex';
+
+  const status = m.dir==='↗' ? '已寄出' : '已讀取';
+
+  modalContent.innerHTML = `
+  <div class="msg-back" onclick="openMessageList()" style="font-size:18px; font-weight:bold;">← 訊息</div>
+  <div style="margin-top:12px; font-size:16px; font-weight:bold;">${m.full}</div>
+    <div>${m.num}　${status}</div>
+    <div style="margin-top:12px;">${m.text}</div>
+  `;
+};
+
+/* icons */
+document.getElementById('phone').onclick = ()=>{
+  openText(`
+    <div style="font-size:18px; font-weight:bold; margin-bottom:12px;">通話</div>
+    <p>暫無新通話</p>
+  `);
+};
+document.getElementById('camera').onclick=()=>openText('<p>你無法操作這項功能</p>');
+document.getElementById('message').onclick=openMessageList;
+document.getElementById('google').onclick=()=>location.href='https://www.google.com';
+
+/* modal functions */
+function openText(html){
+  modalBox.classList.remove('image-mode');
+  modalContent.classList.add('text-mode');
+  imgIndex.style.display='none';
+  modalContent.innerHTML=html;
+  modal.style.display='flex';
+}
+
+function renderImage(){
+  modalContent.innerHTML = `<img src="${imgs[idx]}">`;
+  const rev = modalContent.dataset.reverse==='1';
+  imgIndex.textContent = rev ? `${imgs.length-idx} / ${imgs.length}` : `${idx+1} / ${imgs.length}`;
+}
+
+function openViewer(list, reverse=false){
+  imgs=[...list]; // reset
+  idx=0;
+  modalBox.classList.add('image-mode');
+  modalContent.classList.remove('text-mode');
+  imgIndex.style.display='block';
+  modal.style.display='flex';
+  modalContent.dataset.reverse = reverse ? '1':'0';
+  renderImage();
+}
+
+/* swipe only for images */
+modalContent.addEventListener('touchstart', e=>{
+  if(!modalBox.classList.contains('image-mode')) return;
+  startX=e.touches[0].clientX;
+});
+modalContent.addEventListener('touchend', e=>{
+  if(!modalBox.classList.contains('image-mode')) return;
+  const dx = e.changedTouches[0].clientX - startX;
+  if(Math.abs(dx)>50){
+    const rev = modalContent.dataset.reverse==='1';
+    if(dx<0){ idx=rev?Math.max(idx-1,0):Math.min(idx+1,imgs.length-1);}
+    else{ idx=rev?Math.min(idx+1,imgs.length-1):Math.max(idx-1,0);}
+    renderImage();
+  }
+});
+modalContent.addEventListener('mousedown', e=>{
+  if(!modalBox.classList.contains('image-mode')) return;
+  startX=e.clientX;
+  modalContent.onmouseup = ev=>{
+    const dx=ev.clientX-startX;
+    if(Math.abs(dx)>50){
+      const rev=modalContent.dataset.reverse==='1';
+      if(dx<0){ idx=rev?Math.max(idx-1,0):Math.min(idx+1,imgs.length-1);}
+      else{ idx=rev?Math.min(idx+1,imgs.length-1):Math.max(idx-1,0);}
+      renderImage();
+    }
+    modalContent.onmouseup=null;
+  };
+});
+
+/* icons click for viewers */
+document.getElementById('map').onclick = ()=>openViewer([
+  '/monitor0314/images/map123-1.png',
+  '/monitor0314/images/map123-2.png',
+  '/monitor0314/images/map123-3.png'
+], true);
+
+document.getElementById('calendar').onclick = ()=>openViewer([
+  '/monitor0314/images/calendar123-1.jpg',
+  '/monitor0314/images/calendar123-2.jpg',
+  '/monitor0314/images/calendar123-3.jpg'
+], true);
+
+document.getElementById('photo').onclick = ()=>openViewer([
+  '/monitor0314/images/photo123-1.jpg',
+  '/monitor0314/images/photo123-2.jpg',
+  '/monitor0314/images/photo123-3.jpg'
+]);
+
+document.getElementById('calculator').onclick =
+  ()=>openText('<p>你無法操作這項功能</p>');
+  
+/* exit tab */
+const exitTab=document.getElementById('exitTab');
+let armed=false;
+exitTab.onclick=e=>{
+  e.stopPropagation();
+  if(!exitTab.classList.contains('open')){
+    exitTab.classList.add('open');
+    armed=true;
+  }else if(armed){
+    location.href='https://kk9655433-prog.github.io/monitor0314/FINISH219/';
+  }
+};
+document.body.onclick=()=>{
+  exitTab.classList.remove('open');
+  armed=false;
+};
+
+    /* 天氣卡 */
+async function loadWeatherCard(){
+  try {
+    const API_KEY = "fe47d3323214be59fd0b35a07b472a40";
+    const LAT = 24.9886;
+    const LON = 121.5726;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=metric&lang=zh_tw&appid=${API_KEY}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    document.getElementById("weather-temp").textContent = Math.round(data.main.temp) + "°";
+    document.getElementById("weather-desc").textContent = data.weather[0].description;
+    document.getElementById("weather-humidity").textContent = "濕度 " + data.main.humidity + "%";
+
+    const icon = data.weather[0].icon;
+    document.getElementById("weather-icon").src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+
+    const now = new Date();
+    document.getElementById("weather-date").textContent =
+      now.toLocaleDateString("zh-TW",{month:"long",day:"numeric",weekday:"short"});
+
+  } catch(e) {
+    console.error("抓天氣失敗:", e);
+  }
+}
+
+loadWeatherCard();
+
+</script>
+
+</body>
+</html>
