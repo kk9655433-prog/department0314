@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入侵完成</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #000;
+      background-image: url('/monitor0314/images/background.jpg');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #eaeaea;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 720px;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 36px 40px;
+      border-radius: 14px;
+      line-height: 1.8;
+    }
+
+    .title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .content {
+      font-size: 18px;
+      margin-bottom: 24px;
+    }
+
+    .code {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: #b00000;
+      font-family: "Courier New", monospace;
+      margin: 20px 0 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">已駭客此 IP 位置成功</div>
+
+    <div class="content">
+      已將進度與您最近的平板／電腦連線，請注意查看。<br><br>
+      以下是驗證碼
+    </div>
+
+    <div id="code" class="code">00000000</div>
+
+    <div class="content">
+      請將驗證碼輸入進裝置後查看入侵資料。
+    </div>
+  </div>
+
+  <script>
+    const finalCode = "35216097";
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const codeEl = document.getElementById("code");
+
+    const INITIAL_DELAY = 900; // 全體亂碼預熱時間
+    const STEP_DELAY = 900;    // 每一位鎖定間隔
+
+    const length = finalCode.length;
+    const current = Array(length).fill("0");
+    const intervals = [];
+
+    // 全部同時開始亂碼
+    for (let i = 0; i < length; i++) {
+      intervals[i] = setInterval(() => {
+        current[i] = chars[Math.floor(Math.random() * chars.length)];
+        codeEl.textContent = current.join("");
+      }, 50);
+    }
+
+    // 預熱後，依序由左到右鎖定
+    for (let i = 0; i < length; i++) {
+      setTimeout(() => {
+        clearInterval(intervals[i]);
+        current[i] = finalCode[i];
+        codeEl.textContent = current.join("");
+      }, INITIAL_DELAY + i * STEP_DELAY);
+    }
+  </script>
+</body>
+</html>
