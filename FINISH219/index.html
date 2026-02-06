@@ -1,0 +1,119 @@
+FINISH219/index.html<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>目標選擇</title>
+<link rel="icon" type="image/png" href="/department0314/icons/ROBIN.png">
+<link rel="apple-touch-icon" href="/department0314/icons/ROBIN.png">
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #000;
+  background-image: url('/monitor0314/images/background.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.container {
+  background: rgba(0,0,0,0.65);
+  padding: 40px 60px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+}
+
+.title {
+  font-size: 20px; /* 字號縮小 */
+  color: #fff;
+}
+
+.ip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center; /* IP 置中 */
+}
+
+.ip {
+  font-size: 22px;
+  font-weight: 600;
+  color: #b00000;
+  letter-spacing: 1px;
+  cursor: pointer;
+  user-select: none;
+
+  display: inline-block;
+  border-bottom: 1.5px solid rgba(46,204,113,0.9);
+  padding-bottom: 2px;
+  width: fit-content;
+}
+
+.ip:hover {
+  border-bottom-color: #ffffff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="title">目前在該IP搜尋到以下訊號</div>
+  <div class="title">請選擇要入侵的手機地址：</div>
+
+  <div class="ip-list">
+    <div class="ip" data-final="192.168.001.100" data-link="/monitor0314/FINISH219/100"></div>
+    <div class="ip" data-final="192.168.001.185" data-link="/monitor0314/FINISH219/185"></div>
+    <div class="ip" data-final="192.168.001.122" data-link="/monitor0314/FINISH219/122"></div>
+    <div class="ip" data-final="192.168.001.205" data-link="/monitor0314/FINISH219/205"></div>
+    <div class="ip" data-final="192.168.001.058" data-link="/monitor0314/FINISH219/058"></div>
+    <div class="ip" data-final="192.168.001.244" data-link="/monitor0314/FINISH219/244"></div>
+  </div>
+</div>
+
+<script>
+const chars = "0123456789.";
+const INITIAL_DELAY = 200;
+const STEP_DELAY = 100;
+
+document.querySelectorAll(".ip").forEach(el => {
+  const finalCode = el.dataset.final;
+  const link = el.dataset.link;
+  const length = finalCode.length;
+
+  const current = Array(length).fill("0");
+  el.textContent = current.join("");
+
+  setTimeout(() => {
+    for (let i = 0; i < length; i++) {
+      const interval = setInterval(() => {
+        current[i] = chars[Math.floor(Math.random() * chars.length)];
+        el.textContent = current.join("");
+      }, 50);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        current[i] = finalCode[i];
+        el.textContent = current.join("");
+      }, STEP_DELAY * (i + 1));
+    }
+  }, INITIAL_DELAY);
+
+  el.addEventListener("click", () => {
+    window.location.href = link;
+  });
+});
+</script>
+
+</body>
+</html>
