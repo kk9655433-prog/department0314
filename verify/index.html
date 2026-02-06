@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>驗證中……</title>
+<link rel="icon" type="image/png" href="/department0314/icons/ROBIN.png">
+<link rel="apple-touch-icon" href="/department0314/icons/ROBIN.png">
+  
+<style>
+html, body {
+  margin: 0;
+  height: 100%;
+  background-color: black;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/monitor0314/images/background.jpg') no-repeat center center;
+  background-size: cover;
+  z-index: 0;
+}
+
+.box {
+  position: relative;
+  z-index: 1;
+  background: rgba(0,0,0,0.45);
+  padding: 24px 32px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 22px;
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(8, 52px);
+  gap: 10px;
+  justify-content: center;
+}
+
+.inputs input {
+  width: 52px;
+  height: 52px;
+  font-size: 30px;
+  text-align: center;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #fff;
+  color: #000;
+  box-sizing: border-box;
+}
+
+button {
+  font-size: 22px;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 12px;
+  background: #b00000;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.hidden { display: none; }
+
+.modal-box {
+  background: #1e1e1e;
+  color: #fff;
+  padding: 28px 32px;
+  border-radius: 14px;
+  width: 300px;
+  text-align: center;
+  font-size: 18px;
+}
+
+.modal-box button {
+  margin-top: 20px;
+  font-size: 16px;
+  padding: 10px 32px;
+  border-radius: 10px;
+  border: none;
+  background: #2ecc71;
+  color: black;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 400px) {
+  .inputs {
+    grid-template-columns: repeat(4, 52px);
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <div class="title">請輸入驗證碼</div>
+
+  <div class="inputs">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+    <input maxlength="1" inputmode="numeric">
+  </div>
+
+  <button id="submitBtn">確定</button>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-box">
+    驗證失敗，請重新輸入
+    <br><br>
+    <button id="modalBtn">確定</button>
+  </div>
+</div>
+
+<script>
+window.addEventListener('contextmenu', e => e.preventDefault());
+
+const inputs = Array.from(document.querySelectorAll(".inputs input"));
+const submitBtn = document.getElementById("submitBtn");
+const modal = document.getElementById("modal");
+const modalBtn = document.getElementById("modalBtn");
+
+function resetInputs() {
+  inputs.forEach(i => i.value = "");
+  inputs[0].focus();
+}
+
+// 關閉 modal
+function closeModal() {
+  modal.classList.add("hidden");
+  resetInputs();
+}
+
+// modal 按鈕點擊
+modalBtn.addEventListener("click", closeModal);
+
+// modal 可以用 Enter 關閉
+modal.addEventListener("keydown", e => {
+  if(e.key === "Enter") closeModal();
+});
+
+function showError() {
+  modal.classList.remove("hidden");
+  modal.focus(); // 讓 modal 可以接收鍵盤事件
+}
+
+// 輸入框事件
+inputs.forEach((input, i) => {
+  input.addEventListener("input", () => {
+    // 過濾非數字
+    input.value = input.value.replace(/[^0-9]/g, "");
+    // 自動跳下一格
+    if(input.value && inputs[i+1]) inputs[i+1].focus();
+  });
+
+  // 貼上事件
+  input.addEventListener("paste", e => {
+    e.preventDefault();
+    const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'');
+    for(let j=0; j<inputs.length; j++){
+      inputs[j].value = paste[j] || '';
+    }
+    // 自動聚焦到最後填入的
+    const lastFilled = Math.min(paste.length, inputs.length) - 1;
+    if(lastFilled >= 0) inputs[lastFilled].focus();
+  });
+
+  input.addEventListener("keydown", e => {
+    if(e.key === "Backspace" && !input.value && inputs[i-1]) inputs[i-1].focus();
+    if(e.key === "Enter") { e.preventDefault(); checkCode(); }
+  });
+});
+
+submitBtn.addEventListener("click", checkCode);
+
+function checkCode() {
+  const code = inputs.map(i => i.value).join("");
+  if(code === "35216097") {
+    submitBtn.textContent = "驗證成功，正在跳轉…";
+    setTimeout(() => { window.location.href = "/monitor0314/HillsComputer/"; }, 800);
+  } else showError();
+}
+
+// 初始聚焦
+window.addEventListener("load", () => { inputs[0].focus(); });
+</script>
+
+</body>
+</html>
