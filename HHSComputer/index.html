@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電腦入侵中……</title>
+<style>
+html,body{
+  margin:0;
+  height:100%;
+  overflow:hidden;
+  background:url('/department0314/images/XP.jpg') no-repeat center/cover;
+  font-family:system-ui;
+}
+.desktop{
+  height:100%;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:flex-start;
+}
+.icon{
+  width:80px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  cursor:pointer;
+  color:white;
+  font-size:14px;
+  text-align:center;
+  text-shadow:0 2px 4px black;
+  user-select:none;
+}
+.icon img{
+  width:48px;
+  height:48px;
+  margin-bottom:6px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:9999;
+}
+.modal.active{
+  opacity:1;
+  pointer-events:auto;
+}
+.modal-content{
+  background:#f4f6f9;
+  color:#111;
+  padding:30px;
+  border-radius:8px;
+  max-width:900px;
+  max-height:90vh;
+  overflow:auto;
+  position:relative;
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+}
+.close-btn{
+  position:absolute;
+  top:8px;
+  right:12px;
+  background:#c62828;
+  border:none;
+  color:white;
+  padding:4px 10px;
+  border-radius:4px;
+  cursor:pointer;
+}
+.document{
+  line-height:1.8;
+  font-size:16px;
+  white-space:pre-wrap;
+}
+.document h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+.redacted{
+  background:black;
+  color:black;
+  padding:2px 6px;
+  cursor:pointer;
+  user-select:none;
+}
+.redacted.revealed{
+  background:transparent;
+  color:#c62828;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="desktop">
+  <div class="icon"
+       data-type="query"
+       data-hint="請輸入檔案編號">
+    <img src="/department0314/icons/query.png">查詢系統
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content" id="modalBody">
+    <button class="close-btn" id="closeBtn">X</button>
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById('modal');
+const modalBody = document.getElementById('modalBody');
+
+function openModal(html){
+  modalBody.innerHTML = `<button class="close-btn" id="closeBtn">X</button>` + html;
+  modal.classList.add('active');
+  document.getElementById('closeBtn').onclick = closeModal;
+}
+function closeModal(){
+  modal.classList.remove('active');
+  modalBody.innerHTML = '';
+}
+
+document.addEventListener('contextmenu', e=>e.preventDefault());
+
+/* ===== 檔案資料 ===== */
+const fileMap = {
+  "GHMA-114-DRAFT": "doc_114"
+};
+
+/* ===== 文字內容 ===== */
+const documents = {
+  doc_114: `
+哥譚市醫療法案第114條草案(節錄)
+法案名稱：《公民健康監測與人工智能資料整合條例》
+提案單位：哥譚市政府衛生署
+提案人：市長 漢密爾頓·希爾（Hamilton Hill）
+檔案編號：GHMA-114-Draft
+
+一、立法目的
+為提升哥譚市公共衛生資源配置效率，預防重大傳染病與精神疾病事件，特制定本條例，以整合醫療院所資料、建立人工智能運算平台，並確保公民健康數據之安全管理與政策運用。
+
+二、法條細項
+
+第1條 設立人工智能健康平台
+市政府應委託合法醫療科技公司建立「重生計畫」系統，作為全市公民健康資料整合與分析之主要平台。平台之運作應遵循資料最小化原則，僅收集診斷、基因與精神評估等必要資訊。市政府得依需要授權執法人員、醫療研究單位及保險公司部分查閱。
+
+第2條 監督與審查機制
+成立「人工智能醫療監督委員會」，由市長提名七人組成。委員任期四年，得連任一次。監督委員會應每半年發布資料運作報告，並接受議會質詢。
+委員會可聘請顧問單位進行外部審計（2018年指定為索恩集團）。
+
+第3條 ＂配型審核限制
+凡經哥譚市醫療倫理審議委員會（或市立特別醫療小組）認定之特定緊急病患，其治療方案得豁免既有的器官配型優先序、藥物臨床試驗審核或標準治療流程之限制。＂
+
+特定緊急病患得不經由常規的分配審議、風險評估與倫理聽證程序，立即啟動治療方案。相關治療紀錄與流程文件，將由專屬加密系統進行歸檔封存，並嚴禁向任何未授權之第三方公開。哥譚市醫療倫理審議委員會已授權希望醫療暨生技器材公司，作為本特別條款之唯一執行與監管代表。
+
+第4條 違規處罰
+故意散布偽造資料、破壞系統者，處一年以下有期徒刑或罰金。
+公務員違反保密義務者，除刑事處分外並停止公職。
+`
+};
+
+/* ===== 加密處理 ===== */
+function renderDocument(text){
+  const processed = text.replace(/＂([\s\S]*?)＂/g, (match,p1)=>{
+    return `<span class="redacted" data-text="${p1.replace(/"/g,'&quot;')}">██████</span>`;
+  });
+  openModal(`<div class="document">${processed}</div>`);
+  document.querySelectorAll('.redacted').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      el.textContent = el.dataset.text;
+      el.classList.add('revealed');
+    });
+  });
+}
+
+/* ===== 查詢系統 ===== */
+function querySystemGate(){
+  openModal(`
+    <p style="text-align:center">請輸入檔案編號</p>
+    <input id="codeInput" style="width:80%;padding:8px;margin:10px auto;display:block;">
+    <button id="pwdConfirm">確定</button>
+  `);
+
+  document.getElementById('pwdConfirm').onclick = ()=>{
+    const val = document.getElementById('codeInput').value.toUpperCase();
+    if(fileMap[val]){
+      renderDocument(documents[fileMap[val]]);
+    } else {
+      alert("查無此檔案");
+    }
+  };
+}
+
+document.querySelector('.icon').addEventListener('click', querySystemGate);
+</script>
+
+</body>
+</html>
