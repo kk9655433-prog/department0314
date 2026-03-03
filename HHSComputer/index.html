@@ -143,6 +143,40 @@ html,body{
   display:block;margin:20px auto 0;
   padding:6px 18px;
 }
+
+/* Chrome / Edge / Safari */
+.modal-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.6);
+  border-left: 1px solid rgba(0,255,255,0.2);
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(0,255,255,0.6),
+    rgba(0,150,255,0.6)
+  );
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,255,255,0.6);
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(0,255,255,0.9),
+    rgba(0,150,255,0.9)
+  );
+}
+
+/* Firefox */
+.modal-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,255,255,0.7) rgba(0,0,0,0.6);
+}
 </style>
 </head>
 <body>
@@ -199,9 +233,8 @@ doc114:`
  成立「人工智能醫療監督委員會」，由市長提名七人組成。委員任期四年，得連任一次。監督委員會應每半年發布資料運作報告，並接受議會質詢。<br>
  委員會可聘請顧問單位進行外部審計（2018年指定為索恩集團）。<br><br>
 
-第3條
-＂凡經哥譚市醫療倫理審議委員會（或市立特別醫療小組）認定之特定緊急病患，其治療方案得豁免既有的器官配型優先序、藥物臨床試驗審核或標準治療流程之限制。
-
+第3條 ＂配型審核限制<br>
+凡經哥譚市醫療倫理審議委員會（或市立特別醫療小組）認定之特定緊急病患，其治療方案得豁免既有的器官配型優先序、藥物臨床試驗審核或標準治療流程之限制。<br><br>
 特定緊急病患得不經由常規的分配審議、風險評估與倫理聽證程序，立即啟動治療方案。相關治療紀錄與流程文件，將由專屬加密系統進行歸檔封存，並嚴禁向任何未授權之第三方公開。哥譚市醫療倫理審議委員會已授權希望醫療暨生技器材公司，作為本特別條款之唯一執行與監管代表。＂<br><br>
 
 第4條 違規處罰<br>
