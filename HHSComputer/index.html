@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>電腦入侵中……</title>
+
 <style>
 html,body{
   margin:0;
@@ -12,6 +13,8 @@ html,body{
   background:url('/department0314/images/XP.jpg') no-repeat center/cover;
   font-family:system-ui;
 }
+
+/* ===== 桌面 ===== */
 .desktop{
   height:100%;
   padding:20px;
@@ -30,13 +33,14 @@ html,body{
   font-size:14px;
   text-align:center;
   text-shadow:0 2px 4px black;
-  user-select:none;
 }
 .icon img{
   width:48px;
   height:48px;
   margin-bottom:6px;
 }
+
+/* ===== Modal ===== */
 .modal{
   position:fixed;
   inset:0;
@@ -54,16 +58,69 @@ html,body{
   pointer-events:auto;
 }
 .modal-content{
-  background:#f4f6f9;
-  color:#111;
-  padding:30px;
-  border-radius:8px;
-  max-width:900px;
-  max-height:90vh;
-  overflow:auto;
   position:relative;
-  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+  max-width:1000px;
+  max-height:90vh;
+  width:90%;
+  overflow:auto;
+  border-radius:10px;
+  color:white;
 }
+
+/* 科技背景 */
+.document-bg{
+  background:url('/department0314/images/XP.jpg') no-repeat center/cover;
+  position:relative;
+  padding:40px;
+}
+.document-bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.8); /* 背景壓暗 */
+}
+.document{
+  position:relative;
+  z-index:2;
+  line-height:1.9;
+  font-size:16px;
+}
+
+/* 標題區塊 */
+.doc-header{
+  text-align:center;
+  margin-bottom:30px;
+  padding:20px;
+  border:1px solid rgba(255,255,255,0.4);
+  backdrop-filter:blur(3px);
+  box-shadow:0 0 20px rgba(0,255,255,0.2);
+}
+.doc-header h2{
+  margin:0 0 12px 0;
+  letter-spacing:2px;
+}
+.meta-box{
+  border:1px solid rgba(255,255,255,0.3);
+  padding:15px;
+  margin-top:10px;
+  font-size:14px;
+  opacity:.9;
+}
+
+/* 加密區 */
+.redacted{
+  background:black;
+  color:black;
+  padding:2px 6px;
+  cursor:pointer;
+}
+.redacted.revealed{
+  background:transparent;
+  color:#00e5ff;
+  font-weight:bold;
+}
+
+/* 關閉 */
 .close-btn{
   position:absolute;
   top:8px;
@@ -75,35 +132,32 @@ html,body{
   border-radius:4px;
   cursor:pointer;
 }
-.document{
-  line-height:1.8;
-  font-size:16px;
-  white-space:pre-wrap;
-}
-.document h2{
+
+/* 密碼格 */
+.pwd{
+  width:50px;
+  height:50px;
+  font-size:24px;
   text-align:center;
-  margin-bottom:20px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
-.redacted{
-  background:black;
-  color:black;
-  padding:2px 6px;
+#pwdConfirm{
+  display:block;
+  margin:20px auto 0;
+  padding:6px 18px;
+  background:#0a64ad;
+  color:white;
+  border:none;
+  border-radius:6px;
   cursor:pointer;
-  user-select:none;
-}
-.redacted.revealed{
-  background:transparent;
-  color:#c62828;
-  font-weight:bold;
 }
 </style>
 </head>
 <body>
 
 <div class="desktop">
-  <div class="icon"
-       data-type="query"
-       data-hint="請輸入檔案編號">
+  <div class="icon" data-type="query">
     <img src="/department0314/icons/query.png">查詢系統
   </div>
 </div>
@@ -125,81 +179,114 @@ function openModal(html){
 }
 function closeModal(){
   modal.classList.remove('active');
-  modalBody.innerHTML = '';
+  modalBody.innerHTML='';
+  document.onkeydown=null;
 }
 
-document.addEventListener('contextmenu', e=>e.preventDefault());
-
-/* ===== 檔案資料 ===== */
+/* ===== 文件資料 ===== */
 const fileMap = {
-  "GHMA-114-DRAFT": "doc_114"
+  "GHMA-114-DRAFT":"doc114"
 };
 
-/* ===== 文字內容 ===== */
-const documents = {
-  doc_114: `
-哥譚市醫療法案第114條草案(節錄)
-法案名稱：《公民健康監測與人工智能資料整合條例》
-提案單位：哥譚市政府衛生署
-提案人：市長 漢密爾頓·希爾（Hamilton Hill）
+const documents={
+doc114:`
+<div class="document-bg">
+<div class="document">
+
+<div class="doc-header">
+<h2>哥譚市醫療法案第114條草案（節錄）</h2>
+<div class="meta-box">
+法案名稱：《公民健康監測與人工智能資料整合條例》<br>
+提案單位：哥譚市政府衛生署<br>
+提案人：市長 漢密爾頓·希爾（Hamilton Hill）<br>
 檔案編號：GHMA-114-Draft
+</div>
+</div>
 
-一、立法目的
-為提升哥譚市公共衛生資源配置效率，預防重大傳染病與精神疾病事件，特制定本條例，以整合醫療院所資料、建立人工智能運算平台，並確保公民健康數據之安全管理與政策運用。
+一、立法目的<br>
+為提升哥譚市公共衛生資源配置效率，預防重大傳染病與精神疾病事件，特制定本條例，以整合醫療院所資料、建立人工智能運算平台，並確保公民健康數據之安全管理與政策運用。<br><br>
 
-二、法條細項
+二、法條細項<br><br>
 
-第1條 設立人工智能健康平台
-市政府應委託合法醫療科技公司建立「重生計畫」系統，作為全市公民健康資料整合與分析之主要平台。平台之運作應遵循資料最小化原則，僅收集診斷、基因與精神評估等必要資訊。市政府得依需要授權執法人員、醫療研究單位及保險公司部分查閱。
+第1條 設立人工智能健康平台<br>
+市政府應委託合法醫療科技公司建立「重生計畫」系統...<br><br>
 
-第2條 監督與審查機制
-成立「人工智能醫療監督委員會」，由市長提名七人組成。委員任期四年，得連任一次。監督委員會應每半年發布資料運作報告，並接受議會質詢。
-委員會可聘請顧問單位進行外部審計（2018年指定為索恩集團）。
+第2條 監督與審查機制<br>
+成立「人工智能醫療監督委員會」...<br><br>
 
 第3條 ＂配型審核限制
-凡經哥譚市醫療倫理審議委員會（或市立特別醫療小組）認定之特定緊急病患，其治療方案得豁免既有的器官配型優先序、藥物臨床試驗審核或標準治療流程之限制。＂
+凡經哥譚市醫療倫理審議委員會認定之特定緊急病患，其治療方案得豁免既有器官配型優先序與臨床試驗審核限制。＂<br><br>
 
-特定緊急病患得不經由常規的分配審議、風險評估與倫理聽證程序，立即啟動治療方案。相關治療紀錄與流程文件，將由專屬加密系統進行歸檔封存，並嚴禁向任何未授權之第三方公開。哥譚市醫療倫理審議委員會已授權希望醫療暨生技器材公司，作為本特別條款之唯一執行與監管代表。
-
-第4條 違規處罰
-故意散布偽造資料、破壞系統者，處一年以下有期徒刑或罰金。
-公務員違反保密義務者，除刑事處分外並停止公職。
+第4條 違規處罰<br>
+故意散布偽造資料者，處一年以下有期徒刑或罰金。
+</div>
+</div>
 `
 };
 
-/* ===== 加密處理 ===== */
-function renderDocument(text){
-  const processed = text.replace(/＂([\s\S]*?)＂/g, (match,p1)=>{
-    return `<span class="redacted" data-text="${p1.replace(/"/g,'&quot;')}">██████</span>`;
-  });
-  openModal(`<div class="document">${processed}</div>`);
+/* 加密轉換 */
+function renderDocument(html){
+  html = html.replace(/＂([\s\S]*?)＂/g,
+    (m,p)=>`<span class="redacted" data-text="${p.replace(/"/g,'&quot;')}">██████</span>`
+  );
+  openModal(html);
   document.querySelectorAll('.redacted').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      el.textContent = el.dataset.text;
+    el.onclick=()=>{
+      el.textContent=el.dataset.text;
       el.classList.add('revealed');
-    });
+    };
   });
 }
 
-/* ===== 查詢系統 ===== */
+/* ===== 分字密碼輸入 ===== */
 function querySystemGate(){
-  openModal(`
-    <p style="text-align:center">請輸入檔案編號</p>
-    <input id="codeInput" style="width:80%;padding:8px;margin:10px auto;display:block;">
-    <button id="pwdConfirm">確定</button>
-  `);
+openModal(`
+<p style="text-align:center">請輸入檔案編號</p>
+<div style="display:flex;justify-content:center;gap:4px;">
+${'<input class="pwd start" maxlength="1">'.repeat(4)}
+<span>-</span>
+${'<input class="pwd mid" maxlength="1">'.repeat(3)}
+<span>-</span>
+${'<input class="pwd end" maxlength="1">'.repeat(5)}
+</div>
+<button id="pwdConfirm">確定</button>
+`);
 
-  document.getElementById('pwdConfirm').onclick = ()=>{
-    const val = document.getElementById('codeInput').value.toUpperCase();
-    if(fileMap[val]){
-      renderDocument(documents[fileMap[val]]);
-    } else {
-      alert("查無此檔案");
-    }
-  };
+const starts=[...document.querySelectorAll('.start')];
+const mids=[...document.querySelectorAll('.mid')];
+const ends=[...document.querySelectorAll('.end')];
+const inputs=[...starts,...mids,...ends];
+
+inputs.forEach((input,i)=>{
+input.addEventListener('input',()=>{
+if(input.classList.contains('mid')){
+input.value=input.value.replace(/\D/g,'');
+}else{
+input.value=input.value.toUpperCase().replace(/[^A-Z]/g,'');
+}
+if(input.value&&inputs[i+1])inputs[i+1].focus();
+});
+input.addEventListener('keydown',e=>{
+if(e.key==='Backspace'&&!input.value&&i>0){
+inputs[i-1].focus();
+}
+});
+});
+
+function check(){
+const val=`${starts.map(i=>i.value).join('')}-${mids.map(i=>i.value).join('')}-${ends.map(i=>i.value).join('')}`;
+if(fileMap[val]){
+renderDocument(documents[fileMap[val]]);
+}else{
+alert("查無此檔案");
+}
 }
 
-document.querySelector('.icon').addEventListener('click', querySystemGate);
+document.getElementById('pwdConfirm').onclick=check;
+document.onkeydown=e=>{if(e.key==='Enter')check();}
+}
+
+document.querySelector('.icon').onclick=querySystemGate;
 </script>
 
 </body>
