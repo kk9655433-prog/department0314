@@ -13,8 +13,6 @@ html,body{
   background:url('/department0314/images/XP.jpg') no-repeat center/cover;
   font-family:system-ui;
 }
-
-/* ===== 桌面 ===== */
 .desktop{
   height:100%;
   padding:20px;
@@ -40,7 +38,6 @@ html,body{
   margin-bottom:6px;
 }
 
-/* ===== Modal ===== */
 .modal{
   position:fixed;
   inset:0;
@@ -59,25 +56,23 @@ html,body{
 }
 .modal-content{
   position:relative;
-  max-width:1000px;
-  max-height:90vh;
   width:90%;
+  max-width:1100px;
+  max-height:90vh;
   overflow:auto;
   border-radius:10px;
   color:white;
 }
-
-/* 科技背景 */
 .document-bg{
   background:url('/department0314/images/XP.jpg') no-repeat center/cover;
   position:relative;
-  padding:40px;
+  padding:50px;
 }
 .document-bg::before{
   content:"";
   position:absolute;
   inset:0;
-  background:rgba(0,0,0,0.8); /* 背景壓暗 */
+  background:rgba(0,0,0,0.8);
 }
 .document{
   position:relative;
@@ -85,18 +80,15 @@ html,body{
   line-height:1.9;
   font-size:16px;
 }
-
-/* 標題區塊 */
 .doc-header{
   text-align:center;
-  margin-bottom:30px;
-  padding:20px;
+  margin-bottom:40px;
+  padding:25px;
   border:1px solid rgba(255,255,255,0.4);
-  backdrop-filter:blur(3px);
-  box-shadow:0 0 20px rgba(0,255,255,0.2);
+  box-shadow:0 0 30px rgba(0,255,255,0.2);
 }
 .doc-header h2{
-  margin:0 0 12px 0;
+  margin:0 0 15px 0;
   letter-spacing:2px;
 }
 .meta-box{
@@ -107,11 +99,9 @@ html,body{
   opacity:.9;
 }
 
-/* 加密區 */
 .redacted{
   background:black;
   color:black;
-  padding:2px 6px;
   cursor:pointer;
 }
 .redacted.revealed{
@@ -120,7 +110,6 @@ html,body{
   font-weight:bold;
 }
 
-/* 關閉 */
 .close-btn{
   position:absolute;
   top:8px;
@@ -133,7 +122,6 @@ html,body{
   cursor:pointer;
 }
 
-/* 密碼格 */
 .pwd{
   width:50px;
   height:50px;
@@ -169,13 +157,13 @@ html,body{
 </div>
 
 <script>
-const modal = document.getElementById('modal');
-const modalBody = document.getElementById('modalBody');
+const modal=document.getElementById('modal');
+const modalBody=document.getElementById('modalBody');
 
 function openModal(html){
-  modalBody.innerHTML = `<button class="close-btn" id="closeBtn">X</button>` + html;
+  modalBody.innerHTML=`<button class="close-btn" id="closeBtn">X</button>`+html;
   modal.classList.add('active');
-  document.getElementById('closeBtn').onclick = closeModal;
+  document.getElementById('closeBtn').onclick=closeModal;
 }
 function closeModal(){
   modal.classList.remove('active');
@@ -183,16 +171,17 @@ function closeModal(){
   document.onkeydown=null;
 }
 
-/* ===== 文件資料 ===== */
-const fileMap = {
-  "GHMA-114-DRAFT":"doc114"
+/* ===== 檔案對應 ===== */
+const fileMap={
+"GHMA-114-DRAFT":"doc114",
+"GHMA-833-STASH":"doc833"
 };
 
+/* ===== 文件內容 ===== */
 const documents={
-doc114:`
-<div class="document-bg">
-<div class="document">
 
+doc114:`
+<div class="document-bg"><div class="document">
 <div class="doc-header">
 <h2>哥譚市醫療法案第114條草案（節錄）</h2>
 <div class="meta-box">
@@ -200,42 +189,60 @@ doc114:`
 提案單位：哥譚市政府衛生署<br>
 提案人：市長 漢密爾頓·希爾（Hamilton Hill）<br>
 檔案編號：GHMA-114-Draft
-</div>
-</div>
+</div></div>
 
 一、立法目的<br>
-為提升哥譚市公共衛生資源配置效率，預防重大傳染病與精神疾病事件，特制定本條例，以整合醫療院所資料、建立人工智能運算平台，並確保公民健康數據之安全管理與政策運用。<br><br>
+為提升哥譚市公共衛生資源配置效率...<br><br>
 
-二、法條細項<br><br>
+第3條 ＂凡經哥譚市醫療倫理審議委員會（或市立特別醫療小組）認定之特定緊急病患，其治療方案得豁免既有的器官配型優先序、藥物臨床試驗審核或標準治療流程之限制。
 
-第1條 設立人工智能健康平台<br>
-市政府應委託合法醫療科技公司建立「重生計畫」系統...<br><br>
+特定緊急病患得不經由常規的分配審議、風險評估與倫理聽證程序，立即啟動治療方案。相關治療紀錄與流程文件，將由專屬加密系統進行歸檔封存，並嚴禁向任何未授權之第三方公開。哥譚市醫療倫理審議委員會已授權希望醫療暨生技器材公司，作為本特別條款之唯一執行與監管代表。＂
+</div></div>
+`,
 
-第2條 監督與審查機制<br>
-成立「人工智能醫療監督委員會」...<br><br>
+doc833:`
+<div class="document-bg"><div class="document">
+<div class="doc-header">
+<h2>內部專案協調會議紀錄</h2>
+<div class="meta-box">
+保密等級：絕對機密<br>
+保存期限：永久列管<br>
+流通限制：限列名人員閱覽<br>
+會議時間：2025年1月14日 00:10–01:32<br>
+會議地點：地下行政會議室 B3<br>
+檔案編號：GHMA-833-Stash
+</div></div>
 
-第3條 ＂配型審核限制
-凡經哥譚市醫療倫理審議委員會認定之特定緊急病患，其治療方案得豁免既有器官配型優先序與臨床試驗審核限制。＂<br><br>
+一、議題一：器官來源穩定性<br>
+醫療主管報告，目前合法器官捐贈來源無法滿足專案需求...<br><br>
 
-第4條 違規處罰<br>
-故意散布偽造資料者，處一年以下有期徒刑或罰金。
-</div>
-</div>
+四、決議<br>
+擴大優先名單池規模。<br>
+器官來源作業全程非書面化，僅留加密電子摘要。
+</div></div>
 `
 };
 
-/* 加密轉換 */
+/* ===== 黑框轉換（逐字遮蔽） ===== */
 function renderDocument(html){
-  html = html.replace(/＂([\s\S]*?)＂/g,
-    (m,p)=>`<span class="redacted" data-text="${p.replace(/"/g,'&quot;')}">██████</span>`
-  );
-  openModal(html);
-  document.querySelectorAll('.redacted').forEach(el=>{
-    el.onclick=()=>{
-      el.textContent=el.dataset.text;
-      el.classList.add('revealed');
-    };
-  });
+html=html.replace(/＂([\s\S]*?)＂/g,(m,p)=>{
+let blocks='';
+for(let char of p){
+if(char==='\n'){
+blocks+='<br>';
+}else{
+blocks+='<span class="redacted" data-char="'+char.replace(/"/g,'&quot;')+'">█</span>';
+}
+}
+return blocks;
+});
+openModal(html);
+document.querySelectorAll('.redacted').forEach(el=>{
+el.onclick=()=>{
+el.textContent=el.dataset.char;
+el.classList.add('revealed');
+};
+});
 }
 
 /* ===== 分字密碼輸入 ===== */
@@ -259,11 +266,7 @@ const inputs=[...starts,...mids,...ends];
 
 inputs.forEach((input,i)=>{
 input.addEventListener('input',()=>{
-if(input.classList.contains('mid')){
-input.value=input.value.replace(/\D/g,'');
-}else{
-input.value=input.value.toUpperCase().replace(/[^A-Z]/g,'');
-}
+input.value=input.value.toUpperCase();  // 自動轉大寫
 if(input.value&&inputs[i+1])inputs[i+1].focus();
 });
 input.addEventListener('keydown',e=>{
@@ -281,7 +284,6 @@ renderDocument(documents[fileMap[val]]);
 alert("查無此檔案");
 }
 }
-
 document.getElementById('pwdConfirm').onclick=check;
 document.onkeydown=e=>{if(e.key==='Enter')check();}
 }
