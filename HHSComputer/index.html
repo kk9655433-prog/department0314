@@ -21,13 +21,30 @@ html,body{
   gap:16px;
 }
 .icon{
-  width:80px;
+  width:90px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
   text-align:center;
   color:white;
   cursor:pointer;
   text-shadow:0 2px 4px black;
+  user-select:none;
 }
-.icon img{width:48px;margin-bottom:6px;}
+
+.icon img{
+  width:48px;
+  height:auto;
+  display:block;
+  margin-bottom:6px;
+}
+
+.icon span{
+  display:block;
+  width:100%;
+  word-break:break-all;
+}
 
 .modal{
   position:fixed;
@@ -85,17 +102,20 @@ html,body{
 }
 
 .redacted-block{
-  background:black;
-  color:black;
-  padding:10px;
+  position:relative;
   margin:10px 0;
   cursor:pointer;
-  white-space:pre-wrap;
 }
-.redacted-block.revealed{
-  background:transparent;
-  color:#00e5ff;
-  font-weight:500;
+
+.redacted-block::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:black;
+}
+
+.redacted-block.revealed::before{
+  display:none;
 }
 
 /* 權限提示框 */
@@ -127,10 +147,9 @@ html,body{
 </head>
 <body>
 
-<div class="desktop">
-  <div class="icon" onclick="querySystemGate()">
-    <img src="/department0314/icons/query.png">查詢系統
-  </div>
+<div class="icon" onclick="querySystemGate()">
+  <img src="/department0314/icons/query.png">
+  <span>查詢系統</span>
 </div>
 
 <div class="modal" id="modal">
@@ -243,18 +262,26 @@ doc833:`
 
 /* ===== 黑框轉換（整段遮蔽） ===== */
 function renderDocument(html){
-html=html.replace(/＂([\s\S]*?)＂/g,
-(m,p)=>`<div class="redacted-block" data-text="${p.replace(/"/g,'&quot;')}">${"█".repeat(p.length)}</div>`
-);
-openModal(html);
+  html = html.replace(/＂([\s\S]*?)＂/g,
+    (m,p)=>`
+      <div class="redacted-block" data-text="${p.replace(/"/g,'&quot;')}">
+        ${p}
+      </div>
+    `
+  );
 
-document.querySelectorAll('.redacted-block').forEach(block=>{
-block.onclick=()=>startAuth(block);
-});
+  openModal(html);
+
+  document.querySelectorAll('.redacted-block').forEach(block=>{
+    block.onclick = ()=>startAuth(block);
+  });
 }
 
 /* ===== 權限流程 ===== */
 function startAuth(block){
+  
+if(block.classList.contains('revealed')) return;
+  
 const auth=document.createElement('div');
 auth.className="auth-box";
 document.body.appendChild(auth);
