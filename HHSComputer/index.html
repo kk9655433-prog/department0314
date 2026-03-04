@@ -119,27 +119,31 @@ html,body{
   font-size:14px;
 }
 
-.redacted-block {
-  display: inline-block;
-  background-color: black;
-  color: transparent;
-  text-shadow: none;
-  border-radius: 3px;
-  padding: 0 2px;
-  user-select: none; 
-  line-height: 1.9;
-  white-space: pre-wrap;
+.redacted-group p{
+  margin: 0 0 18px 0;
 }
 
-.redacted-block::selection {
-  background: black; 
-  color: transparent;
+.redacted-group{
+  display:block;
 }
 
-.redacted-group.revealed .redacted-block {
-  background: none;
-  color: white;
-  user-select: text;
+.redacted-group{
+  display:block;
+  cursor:pointer;
+}
+
+.redacted-group:not(.revealed){
+  background:black;
+  color:transparent;
+  user-select:none;
+  border-radius:3px;
+  padding:4px 6px;
+}
+
+.redacted-group.revealed{
+  background:none;
+  color:white;
+  user-select:text;
 }
 
 /* 權限提示框 */
@@ -286,24 +290,43 @@ doc833:`
 檔案編號：GHMA-833-Stash
 </div></div>
 
-＂一、議題一：器官來源穩定性<br><br>
-醫療主管報告，目前合法器官捐贈來源無法滿足專案需求，尤其心臟與肝臟之配型成功率過低，影響專案進度。<br><br>
-資源調度官提出以下方案：<br><br>
-通過「重生計畫」後台資料從特定年齡層（18–35歲）篩選健康個體，透過第三方單位進行接觸、轉移及手術。<br><br>
-所有標的個體一律以「Subject編碼」管理，不保留完整姓名於核心檔案。 <br><br>
-會中確認，相關個體不列入正式醫療紀錄系統。<br><br>
-二、議題二：摘除與分配流程 <br><br>
-專案醫療主管說明：<br><br>
-器官摘除將於專屬設施進行，不進入公立醫療體系，器官依適配性進行分級，優先供應給「核心投資人名單」。<br><br>
-手術紀錄僅保留技術數據，不保留來源資料。 <br><br>
-財務代表強調，投資方對供應穩定性已有明確期待，若進度延誤，將影響後續資金撥付。<br><br>
-三、議題三：失蹤人口關聯風險<br><br>
-風險管控顧問指出，近期失蹤人口數量增加，可能與優先名單池時間軸重疊。<br><br>
-建議措由其他部門對外說明為自願離境或個人因素，必要時製造數起獨立刑事案件轉移焦點並嚴格控管內部人員通訊紀錄。<br><br>
-四、決議<br><br>
-擴大優先名單池規模。<br><br>
-器官來源作業全程非書面化，僅留加密電子摘要。<br><br>
-若有洩密跡象，立即啟動人員隔離與責任切割機制。＂<br><br>
+＂
+<p>一、議題一：器官來源穩定性</p>
+
+<p>醫療主管報告，目前合法器官捐贈來源無法滿足專案需求，尤其心臟與肝臟之配型成功率過低，影響專案進度。</p>
+
+<p>資源調度官提出以下方案：</p>
+
+<p>通過「重生計畫」後台資料從特定年齡層（18–35歲）篩選健康個體，透過第三方單位進行接觸、轉移及手術。</p>
+
+<p>所有標的個體一律以「Subject編碼」管理，不保留完整姓名於核心檔案。</p>
+
+<p>會中確認，相關個體不列入正式醫療紀錄系統。</p>
+
+<p>二、議題二：摘除與分配流程</p>
+
+<p>專案醫療主管說明：</p>
+
+<p>器官摘除將於專屬設施進行，不進入公立醫療體系，器官依適配性進行分級，優先供應給「核心投資人名單」。</p>
+
+<p>手術紀錄僅保留技術數據，不保留來源資料。</p>
+
+<p>財務代表強調，投資方對供應穩定性已有明確期待，若進度延誤，將影響後續資金撥付。</p>
+
+<p>三、議題三：失蹤人口關聯風險</p>
+
+<p>風險管控顧問指出，近期失蹤人口數量增加，可能與優先名單池時間軸重疊。</p>
+
+<p>建議措由其他部門對外說明為自願離境或個人因素，必要時製造數起獨立刑事案件轉移焦點並嚴格控管內部人員通訊紀錄。</p>
+
+<p>四、決議</p>
+
+<p>擴大優先名單池規模。</p>
+
+<p>器官來源作業全程非書面化，僅留加密電子摘要。</p>
+
+<p>若有洩密跡象，立即啟動人員隔離與責任切割機制。</p>
+＂
 </div></div>
 `
 };
@@ -311,16 +334,10 @@ doc833:`
 /* ===== 黑框轉換（整段遮蔽） ===== */
 function renderDocument(html){
 
-  html = html.replace(/＂([\s\S]*?)＂/g, (m, p) => {
-
-    const safeText = p.replace(/"/g,'&quot;');
-
+  html = html.replace(/＂([\s\S]*?)＂/g, (match, content) => {
     return `
-      <span class="redacted-group" data-text="${safeText}">
-        ${p.split(/(\s+)/).map(chunk=>{
-          if(chunk.trim()==="") return chunk; // 保留空白
-          return `<span class="redacted-block">${chunk}</span>`;
-        }).join('')}
+      <span class="redacted-group">
+        ${content}
       </span>
     `;
   });
