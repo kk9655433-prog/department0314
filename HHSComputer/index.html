@@ -332,7 +332,7 @@ clearInterval(dotInterval);
 
 setTimeout(()=>{
 auth.remove();
-block.textContent=block.dataset.text;
+block.innerHTML = block.dataset.text;
 block.classList.add('revealed');
 },5000);
 }
