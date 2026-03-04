@@ -119,31 +119,40 @@ html,body{
   font-size:14px;
 }
 
-.redacted-group p{
-  margin: 0 0 18px 0;
-}
-
+/* ===== Discord-style spoiler chips===== */
 .redacted-group{
-  display:block;
-}
-
-.redacted-group{
-  display:block;
+  display:inline;
   cursor:pointer;
 }
 
-.redacted-group:not(.revealed){
-  background:black;
+/* 每條海苔 */
+.redacted-chip{
+  display:inline-block;
+  background:#000;
   color:transparent;
-  user-select:none;
   border-radius:3px;
-  padding:4px 6px;
+  padding:0 3px;
+  text-shadow:none;
+  user-select:none;
+  -webkit-text-fill-color: transparent;
 }
 
-.redacted-group.revealed{
+.redacted-chip::selection{
+  background:#000;
+  color:transparent;
+}
+
+/* 解鎖後整段回復 */
+.redacted-group.revealed .redacted-chip{
   background:none;
-  color:white;
+  color:inherit;
+  -webkit-text-fill-color: currentColor;
   user-select:text;
+}
+
+/* 保留你 833 的 <p> 段落間距 */
+.redacted-group p{
+  margin:0 0 18px 0;
 }
 
 /* 權限提示框 */
@@ -332,17 +341,60 @@ doc833:`
 };
 
 /* ===== 黑框轉換（整段遮蔽） ===== */
+/* ===== 黑框轉換（只處理 ＂...＂，並切成一條一條海苔；點一下整段解鎖） ===== */
 function renderDocument(html){
-  html = html.split('\n').map(line => {
-    if(line.trim() === '') return line; 
-    return `<span class="redacted-group">${line}</span>`;
-  }).join('\n');
+
+  // 只把全形引號 ＂...＂ 包起來的內容做海苔化
+  html = html.replace(/＂([\s\S]*?)＂/g, (m, content) => {
+    return `<span class="redacted-group">${spoilerizeHTML(content)}</span>`;
+  });
 
   openModal(html);
 
+  // 點任一海苔 => 整段解鎖
   document.querySelectorAll('.redacted-group').forEach(group=>{
-    group.onclick = ()=> startAuth(group);
+    group.onclick = (e)=>{ e.stopPropagation(); startAuth(group); };
   });
+}
+
+/* 把內容中的「文字節點」切成小塊海苔；<br>/<p> 等標籤完全保留 */
+function spoilerizeHTML(raw){
+  const tpl = document.createElement('template');
+  tpl.innerHTML = raw;
+
+  const walker = document.createTreeWalker(tpl.content, NodeFilter.SHOW_TEXT, null);
+  const textNodes = [];
+  while(walker.nextNode()) textNodes.push(walker.currentNode);
+
+  textNodes.forEach(node=>{
+    const t = node.nodeValue;
+    if(!t || !t.trim()) return; 
+
+    const frag = document.createDocumentFragment();
+    const parts = t.split(/(\s+)/); 
+
+    parts.forEach(part=>{
+      if(!part) return;
+
+      if(/^\s+$/.test(part)){
+        frag.appendChild(document.createTextNode(part));
+        return;
+      }
+
+      const chunkSize = 4; 
+      for(let i=0;i<part.length;i+=chunkSize){
+        const chunk = part.slice(i, i+chunkSize);
+        const span = document.createElement('span');
+        span.className = 'redacted-chip';
+        span.textContent = chunk;
+        frag.appendChild(span);
+      }
+    });
+
+    node.parentNode.replaceChild(frag, node);
+  });
+
+  return tpl.innerHTML;
 }
 
 /* ===== 權限流程 ===== */
