@@ -375,14 +375,14 @@ html,body{
  <!-- 中間APP -->
 <div class="main-icons">
 
-  <div class="app-item" id="map">
-    <img src="/department0314/icons/map122.png">
-    <div class="app-label">地圖</div>
+  <div class="app-item" id="play">
+    <img src="/department0314/icons/play122.png">
+    <div class="app-label">play商店</div>
   </div>
 
-  <div class="app-item" id="calculator">
-    <img src="/department0314/icons/calculator122.png">
-    <div class="app-label">計算機</div>
+  <div class="app-item" id="set">
+    <img src="/department0314/icons/set122.png">
+    <div class="app-label">設定</div>
   </div>
 
   <div class="app-item" id="photo">
@@ -432,12 +432,18 @@ const preloadImages = [
   '/department0314/images/photo122-1.jpg',
   '/department0314/images/photo122-2.jpg',
   '/department0314/images/photo122-3.jpg',
-  '/department0314/images/map122-1.png',
-  '/department0314/images/map122-2.png',
-  '/department0314/images/map122-3.png',
-  '/department0314/images/calendar122-1.jpg',
-  '/department0314/images/calendar122-2.jpg',
-  '/department0314/images/calendar122-3.jpg'
+  '/monitor0314/images/Calendar01.jpg',
+  '/monitor0314/images/Calendar02.jpg',
+  '/monitor0314/images/Calendar03.jpg',
+  '/monitor0314/images/Calendar04.jpg',
+  '/monitor0314/images/Calendar05.jpg',
+  '/monitor0314/images/Calendar06.jpg',
+  '/monitor0314/images/Calendar07.jpg',
+  '/monitor0314/images/Calendar08.jpg',
+  '/monitor0314/images/Calendar09.jpg',
+  '/monitor0314/images/Calendar10.jpg',
+  '/monitor0314/images/Calendar11.jpg',
+  '/monitor0314/images/Calendar12.jpg'
 ];
 preloadImages.forEach(src=>{const img=new Image(); img.src=src;});
 
@@ -578,16 +584,20 @@ modalContent.addEventListener('mousedown', e=>{
 });
 
 /* icons click for viewers */
-document.getElementById('map').onclick = ()=>openViewer([
-  '/department0314/images/map122-1.png',
-  '/department0314/images/map122-2.png',
-  '/department0314/images/map122-3.png'
-], true);
 
 document.getElementById('calendar').onclick = ()=>openViewer([
-  '/department0314/images/calendar122-1.jpg',
-  '/department0314/images/calendar122-2.jpg',
-  '/department0314/images/calendar122-3.jpg'
+  '/monitor0314/images/Calendar01.jpg',
+  '/monitor0314/images/Calendar02.jpg',
+  '/monitor0314/images/Calendar03.jpg',
+  '/monitor0314/images/Calendar04.jpg',
+  '/monitor0314/images/Calendar05.jpg',
+  '/monitor0314/images/Calendar06.jpg',
+  '/monitor0314/images/Calendar07.jpg',
+  '/monitor0314/images/Calendar08.jpg',
+  '/monitor0314/images/Calendar09.jpg',
+  '/monitor0314/images/Calendar10.jpg',
+  '/monitor0314/images/Calendar11.jpg',
+  '/monitor0314/images/Calendar12.jpg'
 ], true);
 
 document.getElementById('photo').onclick = ()=>openViewer([
@@ -596,7 +606,7 @@ document.getElementById('photo').onclick = ()=>openViewer([
   '/department0314/images/photo122-3.jpg'
 ]);
 
-document.getElementById('calculator').onclick =
+document.getElementById('set','play').onclick =
   ()=>openText('<p>你無法操作這項功能</p>');
   
 /* exit tab */
