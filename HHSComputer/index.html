@@ -333,14 +333,10 @@ doc833:`
 
 /* ===== 黑框轉換（整段遮蔽） ===== */
 function renderDocument(html){
-
-  html = html.replace(/＂([\s\S]*?)＂/g, (match, content) => {
-    return `
-      <span class="redacted-group">
-        ${content}
-      </span>
-    `;
-  });
+  html = html.split('\n').map(line => {
+    if(line.trim() === '') return line; 
+    return `<span class="redacted-group">${line}</span>`;
+  }).join('\n');
 
   openModal(html);
 
