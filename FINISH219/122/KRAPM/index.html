@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>192.168.001.123</title>
+<title>192.168.001.122</title>
 <link rel="icon" type="image/png" href="/monitor0314/icons/IP.png">
 <link rel="apple-touch-icon" href="/monitor0314/icons/IP.png">
   
@@ -13,7 +13,7 @@ html,body{
   width:100%;
   height:100%;
   font-family:system-ui,sans-serif;
-  background:black url('/monitor0314/images/photo123-1.jpg') center/cover no-repeat;
+  background:black url('/department0314/images/photo122-1.jpg') center/cover no-repeat;
   color:white;
   overflow:hidden;
 }
@@ -376,32 +376,32 @@ html,body{
 <div class="main-icons">
 
   <div class="app-item" id="map">
-    <img src="/monitor0314/icons/map123.png">
+    <img src="/department0314/icons/map122.png">
     <div class="app-label">地圖</div>
   </div>
 
   <div class="app-item" id="calculator">
-    <img src="/monitor0314/icons/calculator123.png">
+    <img src="/department0314/icons/calculator122.png">
     <div class="app-label">計算機</div>
   </div>
 
   <div class="app-item" id="photo">
-    <img src="/monitor0314/icons/photo123.png">
+    <img src="/department0314/icons/photo122.png">
     <div class="app-label">照片</div>
   </div>
 
   <div class="app-item" id="calendar">
-    <img src="/monitor0314/icons/calendar123.png">
+    <img src="/department0314/icons/calendar122.png">
     <div class="app-label">行事曆</div>
   </div>
 </div>
 
  
 <div class="bottom-bar">
-  <img src="/monitor0314/icons/phone123.png" id="phone">
-  <img src="/monitor0314/icons/messege123.png" id="message">
-  <img src="/monitor0314/icons/chrome123.png" id="google">
-  <img src="/monitor0314/icons/camera123.png" id="camera">
+  <img src="/department0314/icons/phone122.png" id="phone">
+  <img src="/department0314/icons/messege122.png" id="message">
+  <img src="/department0314/icons/chrome122.png" id="google">
+  <img src="/department0314/icons/camera122.png" id="camera">
 </div>
 
 <div class="exit-tab" id="exitTab">退出IP</div>
@@ -429,15 +429,15 @@ setBattery(28);
 /* 預載圖片 */
 const preloadImages = [
   '/monitor0314/icons/IP.png',
-  '/monitor0314/images/photo123-1.jpg',
-  '/monitor0314/images/photo123-2.jpg',
-  '/monitor0314/images/photo123-3.jpg',
-  '/monitor0314/images/map123-1.png',
-  '/monitor0314/images/map123-2.png',
-  '/monitor0314/images/map123-3.png',
-  '/monitor0314/images/calendar123-1.jpg',
-  '/monitor0314/images/calendar123-2.jpg',
-  '/monitor0314/images/calendar123-3.jpg'
+  '/department0314/images/photo122-1.jpg',
+  '/department0314/images/photo122-2.jpg',
+  '/department0314/images/photo122-3.jpg',
+  '/department0314/images/map122-1.png',
+  '/department0314/images/map122-2.png',
+  '/department0314/images/map122-3.png',
+  '/department0314/images/calendar122-1.jpg',
+  '/department0314/images/calendar122-2.jpg',
+  '/department0314/images/calendar122-3.jpg'
 ];
 preloadImages.forEach(src=>{const img=new Image(); img.src=src;});
 
@@ -462,8 +462,8 @@ document.getElementById('close').onclick=()=>modal.style.display='none';
 /* messages */
 /* messages */
 const messages=[
-  {dir:'↗',num:'+123153483',date:'1/26',full:'2026/01/26',text:'我要訂八杯奶茶，半糖去冰，晚點會有助理過去<br>領。'},
-  {dir:'↙',num:'+123586812',date:'2/20',full:'2026/02/20',text:'里夫斯先生，您要的資訊已經傳到您的信箱，請<br>注意查收。'},
+  {dir:'↗',num:'+122153483',date:'1/26',full:'2026/01/26',text:'我要訂八杯奶茶，半糖去冰，晚點會有助理過去<br>領。'},
+  {dir:'↙',num:'+122586812',date:'2/20',full:'2026/02/20',text:'里夫斯先生，您要的資訊已經傳到您的信箱，請<br>注意查收。'},
   {dir:'↗',num:'+158973158',date:'3/05',full:'2026/03/05',text:'你什麼時候才會把導演的事情處理完？立刻回電<br>給我。'},
   {dir:'↗',num:'+125378953',date:'3/06',full:'2026/03/06',text:'幫我點忙，速。'}
 ];
@@ -579,21 +579,21 @@ modalContent.addEventListener('mousedown', e=>{
 
 /* icons click for viewers */
 document.getElementById('map').onclick = ()=>openViewer([
-  '/monitor0314/images/map123-1.png',
-  '/monitor0314/images/map123-2.png',
-  '/monitor0314/images/map123-3.png'
+  '/department0314/images/map122-1.png',
+  '/department0314/images/map122-2.png',
+  '/department0314/images/map122-3.png'
 ], true);
 
 document.getElementById('calendar').onclick = ()=>openViewer([
-  '/monitor0314/images/calendar123-1.jpg',
-  '/monitor0314/images/calendar123-2.jpg',
-  '/monitor0314/images/calendar123-3.jpg'
+  '/department0314/images/calendar122-1.jpg',
+  '/department0314/images/calendar122-2.jpg',
+  '/department0314/images/calendar122-3.jpg'
 ], true);
 
 document.getElementById('photo').onclick = ()=>openViewer([
-  '/monitor0314/images/photo123-1.jpg',
-  '/monitor0314/images/photo123-2.jpg',
-  '/monitor0314/images/photo123-3.jpg'
+  '/department0314/images/photo122-1.jpg',
+  '/department0314/images/photo122-2.jpg',
+  '/department0314/images/photo122-3.jpg'
 ]);
 
 document.getElementById('calculator').onclick =
@@ -608,7 +608,7 @@ exitTab.onclick=e=>{
     exitTab.classList.add('open');
     armed=true;
   }else if(armed){
-    location.href='https://kk9655433-prog.github.io/monitor0314/FINISH219/';
+    location.href='https://kk9655433-prog.github.io/department0314/FINISH219/';
   }
 };
 document.body.onclick=()=>{
