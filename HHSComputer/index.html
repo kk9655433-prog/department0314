@@ -337,12 +337,12 @@ doc833:`
 `
 };
 
-/* ===== 黑框轉換：只處理 ＂...＂，維持連續文字，不切字；點一下整段解鎖 ===== */
+/* ===== 黑框轉換：只處理 ＂...＂；每段各自一條海苔；點一下整段解鎖 ===== */
 function renderDocument(html){
 
   html = html.replace(/＂([\s\S]*?)＂/g, (m, content) => {
     const normalized = normalizeSpoilerContent(content);
-    return `<span class="redacted-group"><span class="redacted-spoiler">${normalized}</span></span>`;
+    return `<span class="redacted-group">${normalized}</span>`;
   });
 
   openModal(html);
@@ -352,41 +352,37 @@ function renderDocument(html){
   });
 }
 
-/* 把 <p> 轉成 <br><br>，避免 span 裡塞 block 元素造成排版亂掉 */
+/* 將內容中的 <p> 與 <br><br> 視為「段落分隔」；
+   每個段落各自包一個 .redacted-spoiler，分隔用 <br><br> 放在 span 外面
+   => 段落間不會出現小黑塊 */
 function normalizeSpoilerContent(raw){
   const tpl = document.createElement('template');
   tpl.innerHTML = raw;
 
-  // 1) 將每個 <p> 轉成「內容 + <br><br>」
+  // 1) 把 <p> 全部攤平成：內容 + "\n\n"（當作段落分隔符）
   const ps = [...tpl.content.querySelectorAll('p')];
   ps.forEach(p=>{
     const frag = document.createDocumentFragment();
-
-    // p 內容原樣塞回（保留內部標籤）
     while(p.firstChild) frag.appendChild(p.firstChild);
-
-    frag.appendChild(document.createElement('br'));
-    frag.appendChild(document.createElement('br'));
-
+    frag.appendChild(document.createTextNode('\n\n'));
     p.replaceWith(frag);
   });
 
-  // 2) 清掉開頭/結尾多餘的 <br>
-  //    （避免你的 833 開頭那個空白行變成一整條空海苔）
-  while(tpl.content.firstChild && isOnlyBrOrWhitespace(tpl.content.firstChild)){
-    tpl.content.removeChild(tpl.content.firstChild);
-  }
-  while(tpl.content.lastChild && isOnlyBrOrWhitespace(tpl.content.lastChild)){
-    tpl.content.removeChild(tpl.content.lastChild);
-  }
+  // 2) 把 <br><br> 也轉成 "\n\n"（統一分隔規則）
+  //    單個 <br> 轉成 "\n"
+  const htmlStr = tpl.innerHTML
+    .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n')
+    .replace(/<br\s*\/?>/gi, '\n');
 
-  return tpl.innerHTML;
-}
+  // 3) 以空行分段，逐段包 .redacted-spoiler
+  const parts = htmlStr
+    .split(/\n\s*\n/g)
+    .map(s => s.trim())
+    .filter(Boolean);
 
-function isOnlyBrOrWhitespace(node){
-  if(node.nodeType === Node.TEXT_NODE) return !node.nodeValue.trim();
-  if(node.nodeType === Node.ELEMENT_NODE) return node.tagName === 'BR';
-  return false;
+  return parts
+    .map(part => `<span class="redacted-spoiler">${part}</span>`)
+    .join('<br><br>');
 }
 
 /* ===== 權限流程 ===== */
