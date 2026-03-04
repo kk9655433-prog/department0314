@@ -125,36 +125,34 @@ html,body{
   cursor:pointer;
 }
 
-/* 每條海苔 */
-.redacted-chip{
+/* 核心：每行背景分段塗抹 */
+.redacted-spoiler{
   display:inline-block;
   background:#000;
   color:transparent;
   border-radius:3px;
-  padding:0 3px;
-  text-shadow:none;
+  padding:0 4px;
   user-select:none;
+  text-shadow:none;
   -webkit-text-fill-color: transparent;
+
+  /* 讓換行後每一行都是獨立一條海苔 */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 
-.redacted-chip::selection{
+.redacted-spoiler::selection{
   background:#000;
   color:transparent;
 }
 
-/* 解鎖後整段回復 */
-.redacted-group.revealed .redacted-chip{
+/* 解鎖 */
+.redacted-group.revealed .redacted-spoiler{
   background:none;
   color:inherit;
   -webkit-text-fill-color: currentColor;
   user-select:text;
 }
-
-/* 保留你 833 的 <p> 段落間距 */
-.redacted-group p{
-  margin:0 0 18px 0;
-}
-
 /* 權限提示框 */
 .auth-box{
   position:fixed;
@@ -299,8 +297,7 @@ doc833:`
 檔案編號：GHMA-833-Stash
 </div></div>
 
-＂
-<p>一、議題一：器官來源穩定性</p>
+＂<p>一、議題一：器官來源穩定性</p>
 
 <p>醫療主管報告，目前合法器官捐贈來源無法滿足專案需求，尤其心臟與肝臟之配型成功率過低，影響專案進度。</p>
 
@@ -334,67 +331,61 @@ doc833:`
 
 <p>器官來源作業全程非書面化，僅留加密電子摘要。</p>
 
-<p>若有洩密跡象，立即啟動人員隔離與責任切割機制。</p>
-＂
+<p>若有洩密跡象，立即啟動人員隔離與責任切割機制。</p>＂
 </div></div>
 `
 };
 
-/* ===== 黑框轉換（整段遮蔽） ===== */
-/* ===== 黑框轉換（只處理 ＂...＂，並切成一條一條海苔；點一下整段解鎖） ===== */
+/* ===== 黑框轉換：只處理 ＂...＂，維持連續文字，不切字；點一下整段解鎖 ===== */
 function renderDocument(html){
 
-  // 只把全形引號 ＂...＂ 包起來的內容做海苔化
   html = html.replace(/＂([\s\S]*?)＂/g, (m, content) => {
-    return `<span class="redacted-group">${spoilerizeHTML(content)}</span>`;
+    const normalized = normalizeSpoilerContent(content);
+    return `<span class="redacted-group"><span class="redacted-spoiler">${normalized}</span></span>`;
   });
 
   openModal(html);
 
-  // 點任一海苔 => 整段解鎖
   document.querySelectorAll('.redacted-group').forEach(group=>{
     group.onclick = (e)=>{ e.stopPropagation(); startAuth(group); };
   });
 }
 
-/* 把內容中的「文字節點」切成小塊海苔；<br>/<p> 等標籤完全保留 */
-function spoilerizeHTML(raw){
+/* 把 <p> 轉成 <br><br>，避免 span 裡塞 block 元素造成排版亂掉 */
+function normalizeSpoilerContent(raw){
   const tpl = document.createElement('template');
   tpl.innerHTML = raw;
 
-  const walker = document.createTreeWalker(tpl.content, NodeFilter.SHOW_TEXT, null);
-  const textNodes = [];
-  while(walker.nextNode()) textNodes.push(walker.currentNode);
-
-  textNodes.forEach(node=>{
-    const t = node.nodeValue;
-    if(!t || !t.trim()) return; 
-
+  // 1) 將每個 <p> 轉成「內容 + <br><br>」
+  const ps = [...tpl.content.querySelectorAll('p')];
+  ps.forEach(p=>{
     const frag = document.createDocumentFragment();
-    const parts = t.split(/(\s+)/); 
 
-    parts.forEach(part=>{
-      if(!part) return;
+    // p 內容原樣塞回（保留內部標籤）
+    while(p.firstChild) frag.appendChild(p.firstChild);
 
-      if(/^\s+$/.test(part)){
-        frag.appendChild(document.createTextNode(part));
-        return;
-      }
+    frag.appendChild(document.createElement('br'));
+    frag.appendChild(document.createElement('br'));
 
-      const chunkSize = 4; 
-      for(let i=0;i<part.length;i+=chunkSize){
-        const chunk = part.slice(i, i+chunkSize);
-        const span = document.createElement('span');
-        span.className = 'redacted-chip';
-        span.textContent = chunk;
-        frag.appendChild(span);
-      }
-    });
-
-    node.parentNode.replaceChild(frag, node);
+    p.replaceWith(frag);
   });
 
+  // 2) 清掉開頭/結尾多餘的 <br>
+  //    （避免你的 833 開頭那個空白行變成一整條空海苔）
+  while(tpl.content.firstChild && isOnlyBrOrWhitespace(tpl.content.firstChild)){
+    tpl.content.removeChild(tpl.content.firstChild);
+  }
+  while(tpl.content.lastChild && isOnlyBrOrWhitespace(tpl.content.lastChild)){
+    tpl.content.removeChild(tpl.content.lastChild);
+  }
+
   return tpl.innerHTML;
+}
+
+function isOnlyBrOrWhitespace(node){
+  if(node.nodeType === Node.TEXT_NODE) return !node.nodeValue.trim();
+  if(node.nodeType === Node.ELEMENT_NODE) return node.tagName === 'BR';
+  return false;
 }
 
 /* ===== 權限流程 ===== */
