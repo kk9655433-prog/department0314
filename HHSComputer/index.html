@@ -13,18 +13,14 @@ html,body{
   background:url('/department0314/images/XP.jpg') no-repeat center/cover;
   font-family:system-ui;
 }
+  
 .desktop{
   height:100%;
-  padding:20px;
+  padding-top:8vh;
+  padding-left:6vw;
   display:flex;
   flex-direction:column;
-  gap:16px;
-}
-
-.system-panel{
-  position:absolute;
-  top:8vh;
-  left:6vw;
+  gap:20px;
 }
   
 .icon{
@@ -188,9 +184,11 @@ html,body{
 </head>
 <body>
 
-<div class="icon" onclick="querySystemGate()">
-  <img src="/department0314/icons/query.png">
-  <span>查詢系統</span>
+<div class="desktop">
+  <div class="icon" onclick="querySystemGate()">
+    <img src="/department0314/icons/query.png">
+    <span>查詢系統</span>
+  </div>
 </div>
 
 <div class="modal" id="modal">
