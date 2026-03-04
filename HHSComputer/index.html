@@ -359,7 +359,7 @@ function normalizeSpoilerContent(raw){
   const tpl = document.createElement('template');
   tpl.innerHTML = raw;
 
-  // 1) 把 <p> 全部攤平成：內容 + "\n\n"（當作段落分隔符）
+  // 1) <p> 攤平：內容 + "\n\n"
   const ps = [...tpl.content.querySelectorAll('p')];
   ps.forEach(p=>{
     const frag = document.createDocumentFragment();
@@ -368,23 +368,28 @@ function normalizeSpoilerContent(raw){
     p.replaceWith(frag);
   });
 
-  // 2) 把 <br><br> 也轉成 "\n\n"（統一分隔規則）
-  //    單個 <br> 轉成 "\n"
-  const htmlStr = tpl.innerHTML
+  // 2) <br> 轉成換行字元
+  let htmlStr = tpl.innerHTML
     .replace(/<br\s*\/?>\s*<br\s*\/?>/gi, '\n\n')
     .replace(/<br\s*\/?>/gi, '\n');
 
-  // 3) 以空行分段，逐段包 .redacted-spoiler
-  const parts = htmlStr
+  // 3) 壓縮多餘空白：3 個以上換行 => 2 個換行
+  htmlStr = htmlStr.replace(/\n{3,}/g, '\n\n').trim();
+
+  // 4) 以空行分段（段落切割）
+  let parts = htmlStr
     .split(/\n\s*\n/g)
     .map(s => s.trim())
     .filter(Boolean);
+  if (parts.length >= 2) {
+    parts = [ (parts[0] + '\n' + parts[1]).trim(), ...parts.slice(2) ];
+  }
 
+  // 5) 每段包成一條海苔；段內單換行 => <br>；段與段之間 => <br><br>
   return parts
-    .map(part => `<span class="redacted-spoiler">${part}</span>`)
+    .map(part => `<span class="redacted-spoiler">${part.replace(/\n+/g, '<br>')}</span>`)
     .join('<br><br>');
 }
-
 /* ===== 權限流程 ===== */
 function startAuth(group){
 
