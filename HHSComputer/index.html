@@ -105,19 +105,16 @@ html,body{
 }
 
 .redacted-block{
-  display:inline;
-  position:relative;
-}
-
-.redacted-block::before{
-  content:"";
-  position:absolute;
-  inset:0;
   background:black;
+  color:transparent;
+  text-shadow:none;
+  border-radius:3px;
+  padding:2px 4px;
 }
 
-.redacted-block.revealed::before{
-  display:none;
+.redacted-block.revealed{
+  background:none;
+  color:white;
 }
 
 /* 權限提示框 */
