@@ -105,9 +105,8 @@ html,body{
 }
 
 .redacted-block{
+  display:inline;
   position:relative;
-  margin:10px 0;
-  cursor:pointer;
 }
 
 .redacted-block::before{
@@ -368,6 +367,12 @@ inputs.forEach((input,idx)=>{
   });
 
   input.addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    submitPassword();
+  }
+});
+
+  input.addEventListener('keydown', e=>{
     // 回退上一格
     if(e.key==='Backspace'){
       if(input.value === '' && idx>0){
@@ -386,15 +391,18 @@ inputs.forEach((input,idx)=>{
   });
 });
 
-document.getElementById('pwdConfirm').onclick=()=>{
-const starts=[...document.querySelectorAll('.start')].map(i=>i.value).join('');
-const mids=[...document.querySelectorAll('.mid')].map(i=>i.value).join('');
-const ends=[...document.querySelectorAll('.end')].map(i=>i.value).join('');
-const val=`${starts}-${mids}-${ends}`;
-if(fileMap[val]){
-renderDocument(documents[fileMap[val]]);
-}else{
-alert("查無此檔案");
+document.getElementById('pwdConfirm').onclick = submitPassword;
+function submitPassword(){
+  const starts=[...document.querySelectorAll('.start')].map(i=>i.value).join('');
+  const mids=[...document.querySelectorAll('.mid')].map(i=>i.value).join('');
+  const ends=[...document.querySelectorAll('.end')].map(i=>i.value).join('');
+  const val=`${starts}-${mids}-${ends}`;
+
+  if(fileMap[val]){
+    renderDocument(documents[fileMap[val]]);
+  }else{
+    alert("查無此檔案");
+  }
 }
 };
 }
