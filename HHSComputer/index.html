@@ -49,6 +49,21 @@ html,body{
   word-break:break-all;
 }
 
+.close-btn{
+  position:absolute;
+  top:15px;
+  right:20px;
+  font-size:22px;
+  color:#00e5ff;
+  cursor:pointer;
+  text-shadow:0 0 10px rgba(0,255,255,0.8);
+  transition:.2s;
+}
+
+.close-btn:hover{
+  transform:scale(1.2);
+}
+  
 .modal{
   position:fixed;
   inset:0;
@@ -196,7 +211,10 @@ const modal=document.getElementById('modal');
 const modalBody=document.getElementById('modalBody');
 
 function openModal(html){
-  modalBody.innerHTML=html;
+  modalBody.innerHTML = `
+    <div class="close-btn" onclick="closeModal()">✕</div>
+    ${html}
+  `;
   modal.classList.add('active');
 }
 function closeModal(){
@@ -405,6 +423,11 @@ function querySystemGate(){
   document.getElementById('pwdConfirm').onclick = submitPassword;
 
 }
+  modal.addEventListener('click', e=>{
+  if(e.target === modal){
+    closeModal();
+  }
+});
 </script>
 
 </body>
