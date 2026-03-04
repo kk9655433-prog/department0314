@@ -367,10 +367,9 @@ inputs.forEach((input,idx)=>{
   });
 
   input.addEventListener('keydown', e=>{
-  if(e.key === 'Enter'){
-    submitPassword();
-  }
-});
+    if(e.key==='Enter'){
+     submitPassword();
+   }
 
   input.addEventListener('keydown', e=>{
     // 回退上一格
