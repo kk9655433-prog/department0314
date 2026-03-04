@@ -119,17 +119,27 @@ html,body{
   font-size:14px;
 }
 
-.redacted-block{
-  background:black;
-  color:transparent;
-  text-shadow:none;
-  border-radius:3px;
-  padding:2px 4px;
+.redacted-block {
+  display: inline-block;
+  background-color: black;
+  color: transparent;
+  text-shadow: none;
+  border-radius: 3px;
+  padding: 0 2px;
+  user-select: none; 
+  line-height: 1.9;
+  white-space: pre-wrap;
 }
 
-.redacted-block.revealed{
-  background:none;
-  color:white;
+.redacted-block::selection {
+  background: black; 
+  color: transparent;
+}
+
+.redacted-block.revealed {
+  background: none;
+  color: white;
+  user-select: text; 
 }
 
 /* 權限提示框 */
@@ -314,48 +324,53 @@ doc833:`
 
 /* ===== 黑框轉換（整段遮蔽） ===== */
 function renderDocument(html){
-  html = html.replace(/＂([\s\S]*?)＂/g,
-    (m,p)=>`
-      <div class="redacted-block" data-text="${p.replace(/"/g,'&quot;')}">
-        ${p}
-      </div>
-    `
-  );
+
+  html = html.replace(/＂([\s\S]*?)＂/g, (m, p) => {
+
+    const safeText = p.replace(/"/g,'&quot;');
+
+    return `
+      <span class="redacted-group" data-text="${safeText}">
+        ${p.split(/(\s+)/).map(chunk=>{
+          if(chunk.trim()==="") return chunk; // 保留空白
+          return `<span class="redacted-block">${chunk}</span>`;
+        }).join('')}
+      </span>
+    `;
+  });
 
   openModal(html);
 
-  document.querySelectorAll('.redacted-block').forEach(block=>{
-    block.onclick = ()=>startAuth(block);
+  document.querySelectorAll('.redacted-group').forEach(group=>{
+    group.onclick = ()=> startAuth(group);
   });
 }
 
 /* ===== 權限流程 ===== */
-function startAuth(block){
-  
-if(block.classList.contains('revealed')) return;
-  
-const auth=document.createElement('div');
-auth.className="auth-box";
-document.body.appendChild(auth);
+function startAuth(group){
 
-let dots=0;
-const dotInterval=setInterval(()=>{
-dots=(dots+1)%4;
-auth.innerHTML="確認權限中"+ ".".repeat(dots);
-},500);
+  if(group.classList.contains('revealed')) return;
 
-setTimeout(()=>{
-auth.innerHTML="確認完成<br>權限可查看本機密...";
-clearInterval(dotInterval);
-},3000);
+  const auth=document.createElement('div');
+  auth.className="auth-box";
+  document.body.appendChild(auth);
 
-setTimeout(()=>{
-auth.remove();
-block.innerHTML = block.dataset.text;
-block.classList.add('revealed');
-},5000);
+  let dots=0;
+  const dotInterval=setInterval(()=>{
+    dots=(dots+1)%4;
+    auth.innerHTML="確認權限中"+ ".".repeat(dots);
+  },500);
+
+  setTimeout(()=>{
+    auth.innerHTML="確認完成<br>權限已解鎖...";
+    clearInterval(dotInterval);
+  },3000);
+
+  setTimeout(()=>{
+    auth.remove();
+    group.classList.add('revealed');
+  },5000);
 }
-
 /* ===== 密碼輸入 ===== */
 function querySystemGate(){
 
